@@ -3,15 +3,8 @@
   "outputDirectory": "dist/diaspora-track/browser",
   "rewrites": [
     { 
-      "source": "/api/(.*)", 
-      "destination": "/api/$1" 
-    },
-    { 
       "source": "/(.*)", 
       "destination": "/index.html" 
     }
-  ],
-  "env": {
-    "EXCHANGE_RATE_API_KEY": "@exchange-rate-api-key"
-  }
+  ]
 }
