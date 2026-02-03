@@ -393,9 +393,8 @@ import { ThemeService } from '../../services/theme.service';
                     <div class="text-right">You Get</div>
                   </div>
                   @for (provider of remittanceProviders; track provider.name) {
-                    <div class="grid grid-cols-7 gap-2 text-sm py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2"
-                         [class.bg-green-50]="provider.name === getBestProvider().name"
-                         [class.dark:bg-green-900/20]="provider.name === getBestProvider().name">
+                    <div [ngClass]="{'bg-green-50 dark:bg-green-900': provider.name === getBestProvider().name}"
+                         class="grid grid-cols-7 gap-2 text-sm py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2">
                       <div>
                         <p class="font-medium dark:text-white flex items-center">
                           {{ provider.name }}
