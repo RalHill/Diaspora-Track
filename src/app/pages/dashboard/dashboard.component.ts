@@ -361,27 +361,87 @@ import { ThemeService } from '../../services/theme.service';
                   <span class="ml-auto text-xs text-gray-500 dark:text-gray-400">From United States to Nigeria</span>
                 </div>
               </form>
-              <div class="space-y-3 max-h-48 overflow-y-auto">
-                <div class="grid grid-cols-4 gap-2 text-xs font-semibold text-gray-600 dark:text-gray-400 pb-2 border-b dark:border-gray-700">
-                  <div>Provider</div>
-                  <div class="text-right">Fee</div>
-                  <div class="text-right">Rate</div>
-                  <div class="text-right">Recipient Gets</div>
-                </div>
-                @for (provider of remittanceProviders; track provider.name) {
-                  <div class="grid grid-cols-4 gap-2 text-sm py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded">
-                    <div>
-                      <p class="font-medium dark:text-white">{{ provider.name }}</p>
-                      <p class="text-xs text-gray-500 dark:text-gray-400">{{ provider.speed }}</p>
-                    </div>
-                    <div class="text-right dark:text-gray-300">\${{ provider.fee }}</div>
-                    <div class="text-right dark:text-gray-300">{{ provider.rate }}</div>
-                    <div class="text-right font-semibold dark:text-white">NGN {{ calculateRecipientAmount(provider) | number:'1.2-2' }}</div>
+              <div class="space-y-3 max-h-64 overflow-y-auto">
+                @if (!showDetailedFees()) {
+                  <!-- Simple View -->
+                  <div class="grid grid-cols-4 gap-2 text-xs font-semibold text-gray-600 dark:text-gray-400 pb-2 border-b dark:border-gray-700">
+                    <div>Provider</div>
+                    <div class="text-right">Fee</div>
+                    <div class="text-right">Rate</div>
+                    <div class="text-right">Recipient Gets</div>
                   </div>
+                  @for (provider of remittanceProviders; track provider.name) {
+                    <div class="grid grid-cols-4 gap-2 text-sm py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2">
+                      <div>
+                        <p class="font-medium dark:text-white">{{ provider.name }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ provider.speed }}</p>
+                      </div>
+                      <div class="text-right dark:text-gray-300">\${{ provider.fee }}</div>
+                      <div class="text-right dark:text-gray-300">{{ provider.rate }}</div>
+                      <div class="text-right font-semibold dark:text-white">NGN {{ calculateRecipientAmount(provider) | number:'1.2-2' }}</div>
+                    </div>
+                  }
+                } @else {
+                  <!-- Detailed View -->
+                  <div class="grid grid-cols-7 gap-2 text-xs font-semibold text-gray-600 dark:text-gray-400 pb-2 border-b dark:border-gray-700">
+                    <div>Provider</div>
+                    <div class="text-right">Total Fees</div>
+                    <div class="text-right">Markup %</div>
+                    <div class="text-right">Speed</div>
+                    <div class="text-right">Rating</div>
+                    <div class="text-right">Savings</div>
+                    <div class="text-right">You Get</div>
+                  </div>
+                  @for (provider of remittanceProviders; track provider.name) {
+                    <div class="grid grid-cols-7 gap-2 text-sm py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded px-2"
+                         [class.bg-green-50]="provider.name === getBestProvider().name"
+                         [class.dark:bg-green-900/20]="provider.name === getBestProvider().name">
+                      <div>
+                        <p class="font-medium dark:text-white flex items-center">
+                          {{ provider.name }}
+                          @if (provider.name === getBestProvider().name) {
+                            <span class="ml-1 text-green-600 text-xs">⭐ Best</span>
+                          }
+                        </p>
+                      </div>
+                      <div class="text-right dark:text-gray-300">
+                        <p class="font-medium">\${{ calculateTotalFees(provider) | number:'1.2-2' }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">\${{ provider.fee }} + \${{ provider.hiddenFees }}</p>
+                      </div>
+                      <div class="text-right">
+                        <span class="text-red-600 font-medium">{{ calculateMarkup(provider) | number:'1.2-2' }}%</span>
+                      </div>
+                      <div class="text-right text-xs dark:text-gray-300">{{ provider.speed }}</div>
+                      <div class="text-right">
+                        <span class="text-yellow-500">★</span>
+                        <span class="dark:text-gray-300">{{ provider.rating }}</span>
+                      </div>
+                      <div class="text-right">
+                        @if (calculateSavings(provider) > 0) {
+                          <span class="text-green-600 font-medium">+NGN {{ calculateSavings(provider) | number:'1.2-2' }}</span>
+                        } @else if (calculateSavings(provider) < 0) {
+                          <span class="text-red-600 font-medium">NGN {{ calculateSavings(provider) | number:'1.2-2' }}</span>
+                        } @else {
+                          <span class="text-gray-500 dark:text-gray-400">—</span>
+                        }
+                      </div>
+                      <div class="text-right font-semibold dark:text-white">NGN {{ calculateRecipientAmount(provider) | number:'1.2-2' }}</div>
+                    </div>
+                  }
                 }
               </div>
-              <button class="w-full mt-4 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 font-semibold">
-                Compare Detailed Fees
+              <button (click)="toggleDetailedFees()" class="w-full mt-4 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 font-semibold flex items-center justify-center space-x-2">
+                @if (!showDetailedFees()) {
+                  <span>Compare Detailed Fees</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                } @else {
+                  <span>Show Simple View</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                  </svg>
+                }
               </button>
             </div>
           </div>
@@ -450,6 +510,7 @@ export class DashboardComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   conversionResult = signal<{ result: number; rate: number } | null>(null);
+  showDetailedFees = signal(false);
 
   converterForm = this.fb.group({
     amount: [100, [Validators.required, Validators.min(0)]],
@@ -462,11 +523,13 @@ export class DashboardComponent implements OnInit {
   });
 
   remittanceProviders = [
-    { name: 'Wise', speed: '1-2 days', fee: 3.50, rate: 1419.25 },
-    { name: 'Western Union', speed: 'Same day', fee: 5.00, rate: 1388.75 },
-    { name: 'Remitly', speed: '3-5 days', fee: 3.99, rate: 1412.30 },
-    { name: 'WorldRemit', speed: '1-3 days', fee: 4.99, rate: 1410.15 }
+    { name: 'Wise', speed: '1-2 days', fee: 3.50, rate: 1419.25, hiddenFees: 0, rating: 4.8 },
+    { name: 'Western Union', speed: 'Same day', fee: 5.00, rate: 1388.75, hiddenFees: 2.50, rating: 4.2 },
+    { name: 'Remitly', speed: '3-5 days', fee: 3.99, rate: 1412.30, hiddenFees: 1.00, rating: 4.5 },
+    { name: 'WorldRemit', speed: '1-3 days', fee: 4.99, rate: 1410.15, hiddenFees: 1.50, rating: 4.4 }
   ];
+
+  marketRate = 1423.50; // Current market rate USD to NGN
 
   monthlyData = [
     { name: 'Jan', host: 2100, home: 350 },
@@ -503,6 +566,38 @@ export class DashboardComponent implements OnInit {
   calculateRecipientAmount(provider: any): number {
     const sendAmount = this.remittanceForm.value.sendAmount || 500;
     return (sendAmount - provider.fee) * provider.rate;
+  }
+
+  calculateMarkup(provider: any): number {
+    return ((this.marketRate - provider.rate) / this.marketRate) * 100;
+  }
+
+  calculateTotalFees(provider: any): number {
+    return provider.fee + provider.hiddenFees;
+  }
+
+  calculateSavings(provider: any): number {
+    const worstProvider = this.remittanceProviders.reduce((worst, current) => {
+      const worstAmount = this.calculateRecipientAmount(worst);
+      const currentAmount = this.calculateRecipientAmount(current);
+      return currentAmount < worstAmount ? current : worst;
+    });
+    
+    const bestAmount = this.calculateRecipientAmount(provider);
+    const worstAmount = this.calculateRecipientAmount(worstProvider);
+    return bestAmount - worstAmount;
+  }
+
+  getBestProvider(): any {
+    return this.remittanceProviders.reduce((best, current) => {
+      const bestAmount = this.calculateRecipientAmount(best);
+      const currentAmount = this.calculateRecipientAmount(current);
+      return currentAmount > bestAmount ? current : best;
+    });
+  }
+
+  toggleDetailedFees() {
+    this.showDetailedFees.update(v => !v);
   }
 
   updateRemittanceComparison() {
