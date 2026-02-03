@@ -14,6 +14,16 @@ import { AuthService } from '../../services/auth.service';
         <h1 class="text-3xl font-bold text-center mb-2">Diaspora Track</h1>
         <p class="text-gray-600 text-center mb-8">Track your remittance expenses</p>
 
+        <!-- Demo Credentials Info -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+          <p class="text-sm font-semibold text-blue-900 mb-2">🔑 Demo Login Credentials</p>
+          <div class="space-y-1 text-sm text-blue-800">
+            <p><strong>Email:</strong> demo&#64;diasporatrack.com</p>
+            <p><strong>Password:</strong> demo123</p>
+          </div>
+          <p class="text-xs text-blue-600 mt-2">Use these credentials to explore the app with sample data</p>
+        </div>
+
         @if (error()) {
           <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
             {{ error() }}

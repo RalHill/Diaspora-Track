@@ -1,15 +1,23 @@
 # Diaspora Track
 
-A responsive, mobile-first remittance expense tracker dashboard for people in the diaspora.
+A comprehensive desktop financial dashboard for diaspora communities to track expenses and remittances across multiple countries.
 
 ## Features
 
-- Track money sent via remittance providers (Western Union, Remitly, MoneyGram, Wise, etc.)
-- Compare received exchange rate against live market rate
-- Track hidden fees and visualize spending
-- Supabase authentication and database
-- Live exchange rates via ExchangeRate-API
-- Mobile-first responsive design
+- **Currency Converter** - Real-time conversion between multiple currencies
+- **Expense Summary** - Track expenses across host and home countries
+- **Live Exchange Rates** - Monitor rates for EUR, GBP, NGN, INR, GHS and more
+- **Expense Categories** - Visualize spending by category (Housing, Utilities, Family Support, etc.)
+- **Remittance Comparison** - Compare fees and rates across providers (Wise, Western Union, Remitly, WorldRemit)
+- **Monthly Expense Charts** - Track spending trends over time
+- **Demo Mode** - Test the app with sample data without authentication
+
+## Demo Credentials
+
+**Email:** `demo@diasporatrack.com`  
+**Password:** `demo123`
+
+Use these credentials to explore the app with pre-loaded sample data including transactions, expense breakdowns, and remittance comparisons.
 
 ## Tech Stack
 

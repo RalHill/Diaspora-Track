@@ -1,5 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { SupabaseService } from './supabase.service';
+import { DemoService } from './demo.service';
 
 export interface Transaction {
   id?: string;
@@ -34,10 +35,25 @@ export class TransactionsService {
     this.transactions().reduce((sum, t) => sum + t.fee_amount, 0)
   );
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(
+    private supabase: SupabaseService,
+    private demoService: DemoService
+  ) {}
 
   async loadTransactions() {
     this.loading.set(true);
+    
+    // Use demo data if in demo mode
+    if (this.demoService.isDemoMode()) {
+      const demoUser = this.demoService.getCurrentDemoUser();
+      if (demoUser) {
+        const demoTxs = this.demoService.getTransactionsForUser(demoUser.id);
+        this.transactions.set(demoTxs);
+      }
+      this.loading.set(false);
+      return { data: this.transactions(), error: null };
+    }
+
     const { data, error } = await this.supabase.client
       .from('transactions')
       .select('*')
@@ -52,6 +68,13 @@ export class TransactionsService {
   }
 
   async createTransaction(transaction: Transaction) {
+    // Use demo mode if active
+    if (this.demoService.isDemoMode()) {
+      const newTx = this.demoService.addTransaction(transaction);
+      this.transactions.update(txs => [newTx, ...txs]);
+      return { data: newTx, error: null };
+    }
+
     const { data, error } = await this.supabase.client
       .from('transactions')
       .insert([transaction])

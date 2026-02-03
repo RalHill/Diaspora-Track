@@ -16,8 +16,24 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
+        path: 'expenses',
+        loadComponent: () => import('./pages/expenses/expenses.component').then(m => m.ExpensesComponent)
+      },
+      {
         path: 'add-transaction',
         loadComponent: () => import('./pages/add-transaction/add-transaction.component').then(m => m.AddTransactionComponent)
+      },
+      {
+        path: 'reports',
+        loadComponent: () => import('./pages/reports/reports.component').then(m => m.ReportsComponent)
+      },
+      {
+        path: 'alerts',
+        loadComponent: () => import('./pages/alerts/alerts.component').then(m => m.AlertsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent)
       },
       {
         path: 'analytics',
