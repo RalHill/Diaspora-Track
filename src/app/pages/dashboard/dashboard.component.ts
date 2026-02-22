@@ -40,7 +40,12 @@ import { ThemeService } from '../../services/theme.service';
       }
 
       <!-- Sidebar -->
-      <aside [class]="'fixed lg:static inset-y-0 left-0 z-40 w-64 bg-[#1e3a8a] dark:bg-gray-800 text-white flex flex-col transform transition-transform duration-300 lg:transform-none ' + (mobileMenuOpen() ? 'translate-x-0' : '-translate-x-full lg:translate-x-0')">
+      <aside [ngClass]="{
+        'fixed lg:static inset-y-0 left-0 z-40 w-64 bg-[#1e3a8a] dark:bg-gray-800 text-white flex flex-col': true,
+        'transform transition-transform duration-300 lg:transform-none': true,
+        'translate-x-0': mobileMenuOpen(),
+        '-translate-x-full lg:translate-x-0': !mobileMenuOpen()
+      }">
         <div class="p-6 flex items-center space-x-3">
           <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
